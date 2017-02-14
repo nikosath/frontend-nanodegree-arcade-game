@@ -102,8 +102,7 @@ var Engine = (function(global) {
       allEnemies.forEach(function(enemy) {
         if (
           ((enemy.x2 > player.x1 && enemy.x2 < player.x2) ||
-          (enemy.x1 < player.x2 && enemy.x1 > player.x1))
-          &&
+          (enemy.x1 < player.x2 && enemy.x1 > player.x1)) &&
           (enemy.y1 === player.y1 && enemy.y2 === player.y2)
         ) {
             player.moveStart();
@@ -112,7 +111,7 @@ var Engine = (function(global) {
     }
 
     function checkVictory() {
-      if (player.y1 === edgeBounds['up']) {
+      if (player.y1 === edgeBounds.up) {
         player.moveStart();
       }
     }
