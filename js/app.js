@@ -6,8 +6,11 @@ var Enemy = function(start_col, start_row) {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-    this.x = start_col * X_STEP;
-    this.y = start_row * Y_STEP + Y_START_OFFSET;
+    this.x1 = start_col * X_STEP;
+    this.y1 = start_row * Y_STEP;
+    // this.y1 = start_row * Y_STEP + Y_START_OFFSET;
+    this.x2 = this.x1 + X_STEP;
+    this.y2 = this.y1 + Y_STEP;
 };
 
 // Update the enemy's position, required method for game
@@ -17,34 +20,34 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
 
-    // this.x += X_STEP * dt;
-    // this.x = (this.x > (NUM_COLS*X_STEP)) ? -X_STEP : this.x + (X_STEP * dt);
+    // this.x1 += X_STEP * dt;
+    // this.x1 = (this.x1 > (NUM_COLS*X_STEP)) ? -X_STEP : this.x1 + (X_STEP * dt);
 
     // if the enemy gets completely out of canvas
-    if (this.x > (NUM_COLS*X_STEP)) {
+    if (this.x1 > (NUM_COLS*X_STEP)) {
       // move him out of sight, on the left side of canvas
-      this.x = -X_STEP;
+      this.x1 = -X_STEP;
     } else {
       // move him to the right of his position
-      this.x += X_STEP * dt;
+      this.x1 += X_STEP * dt;
     }
 
 };
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    ctx.drawImage(Resources.get(this.sprite), this.x1, this.y1 + Y_START_OFFSET);
 };
 
 var NUM_COLS = 5;
 var NUM_ROWS = 6;
+var CANVAS_WIDTH = 505;
+var CANVAS_HEIGHT = 606;
+// var X_STEP = CANVAS_WIDTH / NUM_COLS;
+// var Y_STEP = CANVAS_HEIGHT / NUM_ROWS;
 var X_STEP = 101;
 var Y_STEP = 83;
 var Y_START_OFFSET = -30;
-// var PLAYER_START_COL = 2;
-// var PLAYER_START_ROW = 5;
-// var ENEMY_START_COL = 2;
-// var ENEMY_START_ROW = 5;
 var player_start_position = {'col': 2, 'row': 5};
 var enemies_start_positions = [
   {'col': 0, 'row': 1},
@@ -54,10 +57,21 @@ var enemies_start_positions = [
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-var Player = function(start_col, start_row) {
+var Player = function(start_position) {
   this.sprite = 'images/char-boy.png';
-  this.x = start_col * X_STEP;
-  this.y = start_row * Y_STEP + Y_START_OFFSET;
+  this.start_position = start_position;
+  this.moveStart();
+};
+
+Player.prototype.moveStart = function() {
+  // start_col = this.start_position['col'];
+  // start_row = this.start_position['row'];
+  this.x1 = this.start_position['col'] * X_STEP;
+  this.y1 = this.start_position['row'] * Y_STEP;
+  // this.y1 = this.start_position['row'] * Y_STEP + Y_START_OFFSET;
+
+  this.x2 = this.x1 + X_STEP;
+  this.y2 = this.y1 + Y_STEP;
 };
 
 Player.prototype.handleInput = function(movement) {
@@ -68,19 +82,39 @@ Player.prototype.handleInput = function(movement) {
   return true;
 };
 
+var edgeBounds = {
+  'up': 0,
+  'down': NUM_ROWS * Y_STEP,
+  // 'down': ((NUM_ROWS - 1) * Y_STEP) + Y_START_OFFSET,
+  'left': 0,
+  'right': NUM_COLS * X_STEP
+  // 'right': (NUM_COLS - 1) * X_STEP
+};
 Player.prototype.update = function(movement) {
   switch (movement) {
     case 'up':
-      this.y -= Y_STEP;
+      if (this.y1 > edgeBounds['up']) {
+        this.y1 -= Y_STEP;
+        this.y2 -= Y_STEP;
+      }
       break;
     case 'down':
-      this.y += Y_STEP;
+      if (this.y2 < edgeBounds['down']) {
+        this.y1 += Y_STEP;
+        this.y2 += Y_STEP;
+      }
       break;
     case 'left':
-      this.x -= X_STEP;
+      if (this.x1 > edgeBounds['left']) {
+        this.x1 -= X_STEP;
+        this.x2 -= X_STEP;
+      }
       break;
     case 'right':
-      this.x += X_STEP;
+      if (this.x2 < edgeBounds['right']) {
+        this.x1 += X_STEP;
+        this.x2 += X_STEP;
+      }
       break;
     default:
       // do nothing
@@ -89,7 +123,7 @@ Player.prototype.update = function(movement) {
 };
 
 Player.prototype.render = function() {
-  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  ctx.drawImage(Resources.get(this.sprite), this.x1, this.y1 + Y_START_OFFSET);
 };
 
 // Now instantiate your objects.
@@ -98,16 +132,14 @@ Player.prototype.render = function() {
 var NUM_ENEMIES = enemies_start_positions.length;
 var allEnemies = [];
 var e;
-for (e = 0; e < NUM_ENEMIES; e++) {
+for (e = 0; e < NUM_ENEMIES; e += 1) {
   allEnemies[e] = new Enemy(
     enemies_start_positions[e]['col'],
     enemies_start_positions[e]['row']
   );
 }
-var player = new Player(
-  player_start_position['col'],
-  player_start_position['row']
-);
+var player = new Player(player_start_position);
+// player.moveStart();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
