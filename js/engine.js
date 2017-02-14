@@ -99,12 +99,6 @@ var Engine = (function(global) {
     }
 
     function checkCollisions() {
-      // var playerBounds = {
-      //   'up': 0,
-      //   'down': ((NUM_ROWS - 1) * Y_STEP) + Y_START_OFFSET,
-      //   'left': 0,
-      //   'right': (NUM_COLS - 1) * X_STEP
-      // };
       allEnemies.forEach(function(enemy) {
         if (
           ((enemy.x2 > player.x1 && enemy.x2 < player.x2) ||
@@ -113,7 +107,6 @@ var Engine = (function(global) {
           (enemy.y1 === player.y1 && enemy.y2 === player.y2)
         ) {
             player.moveStart();
-            // alert('hi');
           }
       });
     }

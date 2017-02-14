@@ -7,22 +7,7 @@ var Creature = function(start_position) {
     this.moveStart();
 };
 
-
-// Enemies our player must avoid
-var Enemy = function(start_position) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
-    this.start_position = start_position;
-    this.moveStart();
-  // };
-  //
-};
-
-Enemy.prototype.moveStart = function() {
+Creature.prototype.moveStart = function() {
   // start_col = this.start_position['col'];
   // start_row = this.start_position['row'];
   this.x1 = this.start_position['col'] * X_STEP;
@@ -32,6 +17,30 @@ Enemy.prototype.moveStart = function() {
   this.x2 = this.x1 + X_STEP;
   this.y2 = this.y1 + Y_STEP;
 };
+
+
+// Enemies our player must avoid
+var Enemy = function(start_position) {
+  Creature.call(this, start_position);
+    // Variables applied to each of our instances go here,
+    // we've provided one for you to get started
+
+    // The image/sprite for our enemies, this uses
+    // a helper we've provided to easily load images
+    this.sprite = 'images/enemy-bug.png';
+};
+
+Enemy.prototype = Object.create(Creature.prototype);
+Enemy.prototype.constructor = Enemy;
+
+// var Enemy = function(start_position) {
+//
+//     this.sprite = 'images/enemy-bug.png';
+//     this.start_position = start_position;
+//     this.moveStart();
+//
+// };
+
 
 // Enemy.prototype.moveStart = function() {
 //
@@ -67,7 +76,7 @@ Enemy.prototype.update = function(dt) {
 };
 
 // Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
+Creature.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x1, this.y1 + Y_START_OFFSET);
 };
 
@@ -92,22 +101,24 @@ var enemies_start_positions = [
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
+// var Player = function(start_position) {
+//   this.sprite = 'images/char-boy.png';
+//   this.start_position = start_position;
+//   this.moveStart();
+// };
+
 var Player = function(start_position) {
-  this.sprite = 'images/char-boy.png';
-  this.start_position = start_position;
-  this.moveStart();
+  Creature.call(this, start_position);
+    // Variables applied to each of our instances go here,
+    // we've provided one for you to get started
+
+    // The image/sprite for our enemies, this uses
+    // a helper we've provided to easily load images
+    this.sprite = 'images/char-boy.png';
 };
 
-Player.prototype.moveStart = function() {
-  // start_col = this.start_position['col'];
-  // start_row = this.start_position['row'];
-  this.x1 = this.start_position['col'] * X_STEP;
-  this.y1 = this.start_position['row'] * Y_STEP;
-  // this.y1 = this.start_position['row'] * Y_STEP + Y_START_OFFSET;
-
-  this.x2 = this.x1 + X_STEP;
-  this.y2 = this.y1 + Y_STEP;
-};
+Player.prototype = Object.create(Creature.prototype);
+Player.prototype.constructor = Player;
 
 Player.prototype.handleInput = function(movement) {
   if (movement === undefined) {
@@ -157,18 +168,18 @@ Player.prototype.update = function(movement) {
 
 };
 
-Player.prototype.render = function() {
-  ctx.drawImage(Resources.get(this.sprite), this.x1, this.y1 + Y_START_OFFSET);
-};
+// Player.prototype.render = function() {
+//   ctx.drawImage(Resources.get(this.sprite), this.x1, this.y1 + Y_START_OFFSET);
+// };
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var NUM_ENEMIES = enemies_start_positions.length;
 var allEnemies = [];
-var e;
-for (e = 0; e < NUM_ENEMIES; e += 1) {
-  allEnemies[e] = new Enemy(enemies_start_positions[e]);
+var enm;
+for (enm = 0; enm < NUM_ENEMIES; enm += 1) {
+  allEnemies[enm] = new Enemy(enemies_start_positions[enm]);
 }
 var player = new Player(player_start_position);
 // player.moveStart();
