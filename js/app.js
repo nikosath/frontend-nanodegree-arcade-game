@@ -1,17 +1,46 @@
+
+
+var Creature = function(start_position) {
+    // The image/sprite for our enemies, this uses
+    // a helper we've provided to easily load images
+    this.start_position = start_position;
+    this.moveStart();
+};
+
+
 // Enemies our player must avoid
-var Enemy = function(start_col, start_row) {
+var Enemy = function(start_position) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-    this.x1 = start_col * X_STEP;
-    this.y1 = start_row * Y_STEP;
-    // this.y1 = start_row * Y_STEP + Y_START_OFFSET;
-    this.x2 = this.x1 + X_STEP;
-    this.y2 = this.y1 + Y_STEP;
+    this.start_position = start_position;
+    this.moveStart();
+  // };
+  //
 };
+
+Enemy.prototype.moveStart = function() {
+  // start_col = this.start_position['col'];
+  // start_row = this.start_position['row'];
+  this.x1 = this.start_position['col'] * X_STEP;
+  this.y1 = this.start_position['row'] * Y_STEP;
+  // this.y1 = this.start_position['row'] * Y_STEP + Y_START_OFFSET;
+
+  this.x2 = this.x1 + X_STEP;
+  this.y2 = this.y1 + Y_STEP;
+};
+
+// Enemy.prototype.moveStart = function() {
+//
+//   this.x1 = start_col * X_STEP;
+//   this.y1 = start_row * Y_STEP;
+//   this.y1 = start_row * Y_STEP + Y_START_OFFSET;
+//   this.x2 = this.x1 + X_STEP;
+//   this.y2 = this.y1 + Y_STEP;
+// };
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -24,12 +53,15 @@ Enemy.prototype.update = function(dt) {
     // this.x1 = (this.x1 > (NUM_COLS*X_STEP)) ? -X_STEP : this.x1 + (X_STEP * dt);
 
     // if the enemy gets completely out of canvas
-    if (this.x1 > (NUM_COLS*X_STEP)) {
+    if (this.x1 > edgeBounds['right']) {
       // move him out of sight, on the left side of canvas
-      this.x1 = -X_STEP;
+      // this.x1 = -X_STEP;
+      // this.x2 = this.x1 + X_STEP;
+      this.moveStart();
     } else {
       // move him to the right of his position
       this.x1 += X_STEP * dt;
+      this.x2 = this.x1 + X_STEP;
     }
 
 };
@@ -41,8 +73,8 @@ Enemy.prototype.render = function() {
 
 var NUM_COLS = 5;
 var NUM_ROWS = 6;
-var CANVAS_WIDTH = 505;
-var CANVAS_HEIGHT = 606;
+// var CANVAS_WIDTH = 505;
+// var CANVAS_HEIGHT = 606;
 // var X_STEP = CANVAS_WIDTH / NUM_COLS;
 // var Y_STEP = CANVAS_HEIGHT / NUM_ROWS;
 var X_STEP = 101;
@@ -50,9 +82,12 @@ var Y_STEP = 83;
 var Y_START_OFFSET = -30;
 var player_start_position = {'col': 2, 'row': 5};
 var enemies_start_positions = [
-  {'col': 0, 'row': 1},
-  {'col': 1, 'row': 1},
-  {'col': 2, 'row': 1}
+  {'col': -2, 'row': 1},
+  {'col': -5, 'row': 1},
+  {'col': -1, 'row': 2},
+  {'col': -4, 'row': 2},
+  {'col': -3, 'row': 3},
+  {'col': -1, 'row': 3}
 ];
 // Now write your own player class
 // This class requires an update(), render() and
@@ -133,10 +168,7 @@ var NUM_ENEMIES = enemies_start_positions.length;
 var allEnemies = [];
 var e;
 for (e = 0; e < NUM_ENEMIES; e += 1) {
-  allEnemies[e] = new Enemy(
-    enemies_start_positions[e]['col'],
-    enemies_start_positions[e]['row']
-  );
+  allEnemies[e] = new Enemy(enemies_start_positions[e]);
 }
 var player = new Player(player_start_position);
 // player.moveStart();
