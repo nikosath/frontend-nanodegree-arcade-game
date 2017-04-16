@@ -4,7 +4,7 @@ frontend-nanodegree-arcade-game
 Barebones frogger clone.
 
 ### Start the game
-Open index.html with your browser.
+Please visit the [github project page](http://nikosath.space/udacity-frontend-nanodegree-arcade-game/)
 
 ### How to play
 Move your character with your keyboard arrow keys: left, right, up, down.
